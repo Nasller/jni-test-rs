@@ -39,10 +39,10 @@ pub struct CallbackParam {
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub unsafe extern "C" fn Java_App_getInstances<'local>(
+pub unsafe extern "C" fn Java_App_getInstances(
     mut env: JNIEnv,
-    _this: JClass<'local>,
-    target_clazz: JClass<'local>,
+    _this: JClass,
+    target_clazz: JClass,
     limit_num: jint,
 ) -> jobjectArray {
     let local_env = &mut env;
@@ -143,7 +143,7 @@ pub unsafe extern "C" fn jvmti_heap_object_callback(
     return jvmtiIterationControl_JVMTI_ITERATION_CONTINUE;
 }
 
-pub unsafe fn get_objects_with_tags<'local>(
+pub unsafe fn get_objects_with_tags(
     env: &mut JNIEnv,
     jvmti_env: *mut jvmtiEnv,
 ) -> Result<(jint, *mut jobject), String> {
