@@ -1,0 +1,1 @@
+# Test Jni with rust
