@@ -1,7 +1,7 @@
 use std::ffi::c_void;
 use std::ptr::null_mut;
 
-use jni::{JNIEnv, sys};
+use jni::JNIEnv;
 use jni::objects::{JClass, JObject, JString};
 use jni::sys::*;
 
@@ -20,7 +20,7 @@ mod utils;
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "system" fn Java_App_helloJNI(mut env: JNIEnv, _this: JClass) -> jstring {
+pub extern "C" fn Java_App_helloJNI(mut env: JNIEnv, _this: JClass) -> jstring {
     let local_env = &mut env;
     return local_env
         .new_string("SuccessTest")
@@ -39,7 +39,7 @@ pub struct CallbackParam {
 
 #[no_mangle]
 #[allow(non_snake_case)]
-pub unsafe extern "system" fn Java_App_getInstances<'local>(
+pub unsafe extern "C" fn Java_App_getInstances<'local>(
     mut env: JNIEnv,
     _this: JClass<'local>,
     target_clazz: JClass<'local>,
@@ -84,14 +84,14 @@ pub unsafe extern "system" fn Java_App_getInstances<'local>(
 }
 
 #[allow(unused)]
-pub unsafe fn get_jvmti_env(vm: *mut sys::JavaVM) -> Result<*mut jvmtiEnv, String> {
+pub unsafe fn get_jvmti_env(vm: *mut JavaVM) -> Result<*mut jvmtiEnv, String> {
     let mut ptr = null_mut();
     java_vm_unchecked!(vm, GetEnv, &mut ptr, JVMTI_VERSION);
     Ok(ptr as *mut jvmtiEnv)
 }
 
 #[allow(unused)]
-pub unsafe fn get_jvmti_env_(vm: *mut sys::JavaVM) -> Result<*mut jvmtiEnv, String> {
+pub unsafe fn get_jvmti_env_(vm: *mut JavaVM) -> Result<*mut jvmtiEnv, String> {
     let mut ptr: *mut c_void = null_mut();
     let env_res = (**vm).GetEnv.unwrap()(vm, &mut ptr, JVMTI_VERSION);
     if env_res != JNI_OK {
