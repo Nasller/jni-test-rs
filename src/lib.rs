@@ -31,8 +31,7 @@ pub extern "C" fn Java_App_helloJNI(mut env: JNIEnv, _this: JClass) -> jstring {
         .into_raw();
 }
 
-#[derive(Debug)]
-pub struct CallbackParam {
+struct CallbackParam {
     instance_count: i32,
     max_instances: i32,
 }
