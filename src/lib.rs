@@ -22,13 +22,13 @@ mod utils;
 #[allow(non_snake_case)]
 pub extern "C" fn Java_App_helloJNI(mut env: JNIEnv, _this: JClass) -> jstring {
     let local_env = &mut env;
-    return local_env
+    local_env
         .new_string("SuccessTest")
         .unwrap_or_else(|e| {
             throw(e.to_string(), local_env);
             return JString::from(JObject::null());
         })
-        .into_raw();
+        .into_raw()
 }
 
 struct CallbackParam {
@@ -79,7 +79,7 @@ pub unsafe extern "C" fn Java_App_getInstances(
         local_env
     );
 
-    return object_array.as_raw();
+    object_array.as_raw()
 }
 
 #[allow(unused)]
@@ -96,13 +96,13 @@ pub unsafe fn get_jvmti_env_(vm: *mut JavaVM) -> Result<*mut jvmtiEnv, String> {
     if env_res != JNI_OK {
         return Err(format!("No environment, err: {}", env_res));
     }
-    return Ok(ptr as *mut jvmtiEnv);
+    Ok(ptr as *mut jvmtiEnv)
 }
 
 pub unsafe fn add_capabilities(jvmti_env: *mut jvmtiEnv) -> Result<(), String> {
     let mut caps = jvmtiCapabilities::default();
     caps.set_can_tag_objects(1);
-    return unit_or_jvmti_err((**jvmti_env).AddCapabilities.unwrap()(jvmti_env, &caps));
+    unit_or_jvmti_err((**jvmti_env).AddCapabilities.unwrap()(jvmti_env, &caps))
 }
 
 pub unsafe fn iterate_over_instances_of_class(
@@ -114,13 +114,13 @@ pub unsafe fn iterate_over_instances_of_class(
         instance_count: 0,
         max_instances: limit_num,
     };
-    return unit_or_jvmti_err((**jvmti_env).IterateOverInstancesOfClass.unwrap()(
+    unit_or_jvmti_err((**jvmti_env).IterateOverInstancesOfClass.unwrap()(
         jvmti_env,
         target_clazz,
         jvmtiHeapObjectFilter_JVMTI_HEAP_OBJECT_EITHER,
         Some(jvmti_heap_object_callback),
         &mut user_data as *mut CallbackParam as *mut c_void,
-    ));
+    ))
 }
 
 pub unsafe extern "C" fn jvmti_heap_object_callback(
@@ -139,7 +139,7 @@ pub unsafe extern "C" fn jvmti_heap_object_callback(
     if data.instance_count >= data.max_instances {
         return jvmtiIterationControl_JVMTI_ITERATION_ABORT; // 停止迭代
     }
-    return jvmtiIterationControl_JVMTI_ITERATION_CONTINUE;
+    jvmtiIterationControl_JVMTI_ITERATION_CONTINUE
 }
 
 pub unsafe fn get_objects_with_tags(
@@ -159,5 +159,5 @@ pub unsafe fn get_objects_with_tags(
         throw(err.clone(), env);
         return Err(err);
     }
-    return Ok((count, objects));
+    Ok((count, objects))
 }
